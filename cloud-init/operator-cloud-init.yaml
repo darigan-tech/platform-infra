@@ -1,0 +1,13 @@
+
+#cloud-init/master-cloud-init.yaml
+#cloud-config
+runcmd:
+  - export K3S_TOKEN="${k3s_token}"
+  - export INSTALL_K3S_VERSION="${k3s_version}"
+  - export K3S_NODE_IP="${master_private_ip}"
+  - export K3S_FLANNEL_IFACE=$(ip -o -4 route get ${master_private_ip} | awk '{print $5}') # Dynamically find interface
+  - export K3S_TLS_SAN="${master_public_ip}" # Add the server's public IP for API cert validation
+
+  - curl -sfL https://get.k3s.io | sh -s - server --cluster-init --node-ip "${master_private_ip}" --flannel-iface "$(echo $K3S_FLANNEL_IFACE)" --token "${k3s_token}" --tls-san "${master_public_ip}"
+
+  - echo "K3s single-node operator setup complete."
