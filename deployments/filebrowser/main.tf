@@ -1,18 +1,5 @@
-terraform {
-  required_providers {
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-      version = "~> 2.23" # Use a compatible version
-    }
-  }
-}
-
-provider "kubernetes" {
-  config_path = var.kubeconfig
-}
-
 // Web Page
-resource "kubernetes_deployment_v1" "nginx_deployment" {
+resource "kubernetes_deployment_v1" "file_browser_deployment" {
   metadata {
     name = var.deployment.name
     labels = {
@@ -46,7 +33,8 @@ resource "kubernetes_deployment_v1" "nginx_deployment" {
 
 }
 
-resource "kubernetes_service_v1" "nginx_service" {
+# # --- Nginx Service ---
+resource "kubernetes_service_v1" "file_browser_service" {
   metadata {
     name = var.service.name
     labels = {
@@ -67,5 +55,6 @@ resource "kubernetes_service_v1" "nginx_service" {
 }
 
 output "service_name" {
-  value = kubernetes_service_v1.nginx_service.metadata[0].name
+  value = kubernetes_service_v1.file_browser_service.metadata[0].name
 }
+
