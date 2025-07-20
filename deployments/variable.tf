@@ -46,6 +46,11 @@ variable "file_browser" {
       protocol = string
       port = number
       target_port = number
-    })
+    }),
+    volumes = list(object({
+      name = string
+      mount_path = string
+      host_path = string
+    }))
   })
 }

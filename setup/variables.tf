@@ -25,6 +25,26 @@ variable "hcloud_ssh_key" {
   })
 }
 
+
+
+variable "firewall" {
+  type = object({
+    name = string
+    labels = object({
+      environment = string
+      purpose = string
+    })
+    rules = list(object({
+      direction = string
+      protocol = string
+      port = string
+      source_ips = list(string)
+      destination_ips = list(string)
+      description = string
+    }))
+  })
+}
+
 variable "hcloud_server" {
   type = object({
     name = string

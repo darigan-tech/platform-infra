@@ -38,12 +38,33 @@ resource "hcloud_floating_ip" "k3s_operator_public_ip" {
   home_location   = var.public_floating_ip.home_location
 }
 
+resource "hcloud_firewall" "k3s_operator_firewall" {
+  name = var.firewall.name
+  labels = {
+    environment = var.firewall.labels.environment
+    purpose = var.firewall.labels.purpose
+  }
+
+  dynamic "rule" {
+    for_each = var.firewall.rules
+    content {
+      direction = rule.value.direction
+      protocol = rule.value.protocol
+      port = rule.value.port
+      source_ips = rule.value.source_ips
+      destination_ips = rule.value.destination_ips
+      description = rule.value.description
+    }
+  }
+}
+
 resource "hcloud_server" "k3s_operator" {
   name        = var.hcloud_server.name
   image       = var.hcloud_server.image
   server_type = var.hcloud_server.server_type
   location    = var.hcloud_server.location
   ssh_keys    = [hcloud_ssh_key.k3s_ssh_key.id]
+  firewall_ids = [hcloud_firewall.k3s_operator_firewall.id]
 
   network {
     network_id = hcloud_network.k3s_private_network.id

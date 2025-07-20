@@ -31,3 +31,11 @@ variable "service" {
     target_port = number
   })
 }
+
+variable "volumes" {
+  type = list(object({
+    name = string
+    mount_path = string
+    host_path = string
+  }))
+}

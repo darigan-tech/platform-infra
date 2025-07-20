@@ -33,12 +33,14 @@ resource "helm_release" "caddy_ingress_controller" {
   chart      = "caddy-ingress-controller"
   namespace  = kubernetes_namespace_v1.caddy_system.metadata[0].name
 
+
   # Values to configure the Caddy Ingress Controller
   values = [
     yamlencode({
       ingressController = {
         config = {
-          automaticHTTPS = var.CADDY_EMAIL // Sometimes this is not picked up properly causing errors
+          automaticHTTPS = true
+          email = var.CADDY_EMAIL
         }
       }
       persistence = {
@@ -73,8 +75,14 @@ module "file-browser-deployment" {
   container = var.file_browser.container
   deployment = var.file_browser.deployment
   service = var.file_browser.service
+  volumes = var.file_browser.volumes
 }
 
+// Error:
+/* Errors
+* Connection Refused - Open Firewall 80 & 443 to all addresses for challenges
+* secrets "caddy.ingress--acme.acme-v02.api.letsencrypt.org-directory.users.default.default.key" already exists; Delete the secret from the namespace
+ */
 resource "kubernetes_ingress_v1" "caddy_ingress" {
   metadata {
     name = "whoami-ingress"
@@ -87,7 +95,7 @@ resource "kubernetes_ingress_v1" "caddy_ingress" {
     # Specify the IngressClass that the Caddy Ingress Controller creates
     ingress_class_name = "caddy"
     rule {
-      host = "fbx.darigan.tech" # CHANGE THIS to a domain you control!
+      host = "drive.darigan.tech" # CHANGE THIS to a domain you control!
       http {
         path {
           path     = "/"
@@ -95,7 +103,6 @@ resource "kubernetes_ingress_v1" "caddy_ingress" {
           backend {
             service {
               name = module.file-browser-deployment.service_name
-              # name = kubernetes_service_v1.file_browser_service.metadata[0].name
               port {
                 number = var.file_browser.service.port
               }
@@ -105,7 +112,7 @@ resource "kubernetes_ingress_v1" "caddy_ingress" {
       }
     }
     rule {
-      host = "webx.darigan.tech"
+      host = "web.darigan.tech"
       http {
         path {
           path     = "/"
