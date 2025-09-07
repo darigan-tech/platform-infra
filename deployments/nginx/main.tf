@@ -43,7 +43,6 @@ resource "kubernetes_deployment_v1" "nginx_deployment" {
       }
     }
   }
-
 }
 
 resource "kubernetes_service_v1" "nginx_service" {

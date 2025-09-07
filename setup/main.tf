@@ -18,11 +18,19 @@ provider "hcloud" {
 resource "hcloud_ssh_key" "k3s_ssh_key" {
   name       = var.hcloud_ssh_key.name
   public_key = file(var.hcloud_ssh_key.public_key_filepath)
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "hcloud_network" "k3s_private_network" {
   name = var.hcloud_network.name
   ip_range = var.hcloud_network.ip_range
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "hcloud_network_subnet" "k3s_private_subnet" {
@@ -30,12 +38,20 @@ resource "hcloud_network_subnet" "k3s_private_subnet" {
   type         = var.hcloud_network_subnet.type
   network_zone = var.hcloud_network_subnet.network_zone
   ip_range     = var.hcloud_network_subnet.ip_range
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "hcloud_floating_ip" "k3s_operator_public_ip" {
   name            = var.public_floating_ip.name
   type            = var.public_floating_ip.type
   home_location   = var.public_floating_ip.home_location
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "hcloud_firewall" "k3s_operator_firewall" {
@@ -43,6 +59,10 @@ resource "hcloud_firewall" "k3s_operator_firewall" {
   labels = {
     environment = var.firewall.labels.environment
     purpose = var.firewall.labels.purpose
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 
   dynamic "rule" {
@@ -66,6 +86,10 @@ resource "hcloud_server" "k3s_operator" {
   ssh_keys    = [hcloud_ssh_key.k3s_ssh_key.id]
   firewall_ids = [hcloud_firewall.k3s_operator_firewall.id]
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   network {
     network_id = hcloud_network.k3s_private_network.id
     ip         = cidrhost(hcloud_network_subnet.k3s_private_subnet.ip_range, var.hcloud_server.host_number)
@@ -84,4 +108,8 @@ resource "hcloud_server" "k3s_operator" {
 resource "hcloud_floating_ip_assignment" "k3s_operator_public_ip_assign" {
   floating_ip_id = hcloud_floating_ip.k3s_operator_public_ip.id
   server_id      = hcloud_server.k3s_operator.id
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

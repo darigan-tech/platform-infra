@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "2.5.2"
+    }
+  }
+}
 // Web Page
 resource "kubernetes_deployment_v1" "file_browser_deployment" {
   metadata {
@@ -25,8 +33,6 @@ resource "kubernetes_deployment_v1" "file_browser_deployment" {
 
 
       spec {
-
-
         dynamic "volume" {
           for_each = var.volumes
           content {
@@ -43,6 +49,21 @@ resource "kubernetes_deployment_v1" "file_browser_deployment" {
 
           port {
             container_port = var.container.port
+          }
+
+          env {
+            name = "PUID"
+            value = "1000"
+          }
+
+          env {
+            name = "GUID"
+            value = "1000"
+          }
+
+          env {
+            name = "umask"
+            value = "002"
           }
 
           dynamic "volume_mount" {
