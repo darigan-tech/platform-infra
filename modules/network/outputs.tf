@@ -1,3 +1,3 @@
-output "network_id" {
-  value = hcloud_network.k3s_private_network.id
+output "private_network_id" {
+  value = hcloud_network.private_network.id
 }

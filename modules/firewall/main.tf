@@ -11,5 +11,9 @@ resource "hcloud_firewall" "k3s_firewall" {
       description     = rule.value.description
     }
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 

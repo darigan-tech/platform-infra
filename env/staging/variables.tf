@@ -41,3 +41,13 @@ variable "server" {
     user_data_path = string
   })
 }
+
+variable "ssh" {
+  type = object({
+    key = object({
+      name = string
+      path = string
+    })
+    user_data_path = string
+  })
+}

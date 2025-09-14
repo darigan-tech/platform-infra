@@ -1,8 +1,14 @@
-variable "network" {
+variable "private_network" {
   type = object({
     name = string
     ip_range = string
-    subnet_ip_range = string
-    zone = string
+  })
+}
+
+variable "private_network_subnet" {
+  type = object({
+    type = string
+    network_zone = string
+    ip_range = string
   })
 }
