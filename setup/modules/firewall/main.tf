@@ -16,4 +16,3 @@ resource "hcloud_firewall" "k3s_firewall" {
     prevent_destroy = true
   }
 }
-

@@ -1,17 +1,5 @@
-module "network" {
-  source = "../../modules/network"
-  network = var.network
+resource "kubernetes_namespace_v1" "env_namespace" {
+  metadata {
+    name = var.namespace
+  }
 }
-
-module "firewall" {
-  source = "../../modules/firewall"
-  firewall = var.firewall
-}
-
-module "server" {
-  source = "../../modules/server"
-  server = var.server
-  firewall_id = var.server.firewall_id
-  ssh = {}
-}
-

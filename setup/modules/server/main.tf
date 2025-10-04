@@ -12,7 +12,7 @@ resource "hcloud_server" "master-node" {
   }
 
   user_data = var.user_data
-
+  
   lifecycle {
     prevent_destroy = true
   }
